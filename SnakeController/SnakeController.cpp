@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <sstream>
-
+#include <iostream>
 #include "EventT.hpp"
 #include "IPort.hpp"
 
@@ -213,9 +213,30 @@ Controller::Segment Controller::getNewHead() const
     return newHead;
 }
 
-void Controller::receive(std::unique_ptr<Event> e)
+void Controller::receive(const std::unique_ptr<Event> e)
 {
-    try {
+    if(e->getMessageId()==0x20)
+        {
+            handleTimePassed(e);
+        } else
+            {if(e->getMessageId()==0x10)
+                        {
+                        handleDirectionChange(e);
+                        } else
+                            {if(e->getMessageId()==0x40)
+                            {
+                            handleFoodPositionChange(e);
+                            } else
+                                {if(e->getMessageId()==0x42)
+                                    {
+                                    handleNewFood(e);
+                                    } 
+                                }}}
+
+    
+
+
+    /*try {
         handleTimePassed(*dynamic_cast<EventT<TimeoutInd> const&>(*e));
     } catch (std::bad_cast&) {
         try {
@@ -231,7 +252,7 @@ void Controller::receive(std::unique_ptr<Event> e)
                 }
             }
         }
-    }
+    }*/
 }
 
 } // namespace Snake
